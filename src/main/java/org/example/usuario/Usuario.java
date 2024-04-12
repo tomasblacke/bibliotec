@@ -4,13 +4,14 @@ public abstract class Usuario {
     private String nombre;
     private String apellido;
     private String correo;
-    private int id=0;
+    private int id;
+    private static int contadorID=0;
 
     public Usuario(String nombre, String apellido, String correo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
-        this.id = id++;
+        this.id = ++contadorID;
     }
 
     public String getNombre() {
