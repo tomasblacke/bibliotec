@@ -57,11 +57,41 @@ public class Biblioteca {
             return null;
         }
     }
+    public Materiales busquedaMaterial(){
+        System.out.println("Ingrese el titulo que desea retirar");
+        Scanner sc = new Scanner(System.in);
+        String titulo = sc.nextLine();
+        for(Materiales material: misMateriales) {
+            if(titulo.equals(material.getTitulo())) {
+                return material;
+            }
+            else {
+                System.out.println("No se encontro el titulo");
+            }
+        }
+        return null;
+    }
+    public Usuario buscarUsuario() {
+        Scanner sc = new Scanner(System.in);
+        int id = Integer.parseInt(sc.nextLine());
 
-    public void prestarMateriales(Usuario usuario, Materiales materiales, LocalDate fechaPrestamo, LocalDate fechaDevolucion) {
+        for(Usuario usuario: misUsuarios) {
+            if(usuario.getId() == id) {
+                return usuario;
+            }
+            else{
+                System.out.println("No se encontro el ID");
+            }
+        }
+        return null;
+    }
+    public void prestarMateriales() {
+
+        Usuario usuario = buscarUsuario();
+        Materiales materiales= busquedaMaterial();
         if (materiales.getEstado() == Materiales.estado.DISPONIBLE) {
             materiales.setEstado(Materiales.estado.PRESTADO);
-            fechaDevolucion = calcularFechaDevolucion(materiales, usuario);
+            LocalDate fechaDevolucion = calcularFechaDevolucion(materiales, usuario);
             Prestamo prestamo = new Prestamo(usuario, materiales, LocalDate.now(), fechaDevolucion);
             misPrestamos.add(prestamo);
         }
@@ -84,44 +114,60 @@ public class Biblioteca {
     */
     }
     /////////////////////MUESTREO DE USUARIOS Y MODIFICACIONES DE DATOS//////////////////////
-    public void mostrarUsuarioAndCambiar (Usuario usuario) {
+    public void mostrarUno(Usuario u){
+        System.out.println("==================");
+        System.out.println("USUARIO:");
+        System.out.println("==================");
+        System.out.println("\tID: " + u.getId());
+        System.out.println("\tNombre: " + u.getNombre());
+        System.out.println("\tApellido: " + u.getApellido());
+        System.out.println("==================");
+    }
+    public void mostrarUsuarioAndCambiar () {
+
         System.out.println("Ingrese ID:");
         Scanner sc = new Scanner(System.in);
         int id = sc.nextInt();
+        System.out.println("ID:"+ id);
         for (Usuario u : misUsuarios) {
-            if (id == usuario.getId()) {
-                System.out.println("==================");
-                System.out.println("USUARIO:");
-                System.out.println("==================");
-                System.out.println("\tID: " + u.getId());
-                System.out.println("\tNombre: " + u.getNombre());
-                System.out.println("\tApellido: " + u.getApellido());
-                System.out.println("==================");
+            if (id == u.getId()) {
+
+               mostrarUno(u);
+
+                int opcion;
+                do {
+                    System.out.println("1-Cambiar Nombre");
+                    System.out.println("2-Cambiar Mail");
+                    System.out.println("3-Cambiar Apellido");
+                    System.out.println("4-Salir");
+                    opcion = sc.nextInt();
+                    switch (opcion) {
+                        case 1:
+                            System.out.println("Ingrese nuevo nombre:");
+                            String nombre = sc.next();
+                            u.setNombre(nombre);
+                            mostrarUno(u);
+                            break;
+                        case 2:
+                            System.out.println("Ingrese nuevo mail");
+                            String mail = sc.next();
+                            u.setCorreo(mail);
+                            mostrarUno(u);
+                            break;
+                        case 3:
+                            System.out.println("Ingrese nuevo apellido:");
+                            String apellido = sc.next();
+                            u.setApellido(apellido);
+                            mostrarUno(u);
+                            break;
+                        case 4:
+                            System.out.println("Saliendo del menu");
+                            break;
+                    }
+
+                } while (opcion != 4);
             }
-            System.out.println("1-Cambiar Nombre");
-            System.out.println("2-Cambiar Mail");
-            System.out.println("3-Cambiar Apellido");
-            System.out.println("4-NADA");
-            int opcion = sc.nextInt();
-            switch (opcion) {
-                case 1:
-                    System.out.println("Ingrese nuevo nombre:");
-                    String nombre = sc.next();
-                    u.setNombre(nombre);
-                    break;
-                case 2:
-                    System.out.println("Ingrese nuevo mail");
-                    String mail = sc.next();
-                    u.setCorreo(mail);
-                    break;
-                case 3:
-                    System.out.println("Ingrese nuevo apellido:");
-                    String apellido = sc.next();
-                    u.setApellido(apellido);
-                    break;
-                case 4:
-                    break;
-            }
+
         }
     }
     public void mostrarUsuarios(){
@@ -136,5 +182,6 @@ public class Biblioteca {
         }
 
     }
+
 
 }
