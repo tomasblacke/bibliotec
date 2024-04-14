@@ -19,6 +19,7 @@ public class Main {
             System.out.println("3-Pedir Prestamo");
             System.out.println("4-Devolver Prestamo");
             System.out.println("5-Materiales Prestados");
+            System.out.println("6-Materiales En Sistema");
             System.out.println("99-Salir ");
         opcionMenu = scanner.nextInt();
         switch (opcionMenu){
@@ -31,6 +32,15 @@ public class Main {
                     break;
             case 3:
                     biblioteca.prestarMateriales();
+                    break;
+            case 4:
+                    biblioteca.devolucionMaterial();
+                    break;
+            case 5:
+                    biblioteca.muestraDePrestamos();
+                    break;
+            case 6:
+                    biblioteca.mostrarMateriales();
                     break;
         }
 

@@ -6,12 +6,14 @@ public abstract class Usuario {
     private String correo;
     private int id;
     private static int contadorID=0;
+    private static int cantidadDePrestamos=0;
 
     public Usuario(String nombre, String apellido, String correo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
         this.id = ++contadorID;
+        this.cantidadDePrestamos = cantidadDePrestamos;
     }
 
     public String getNombre() {
@@ -42,5 +44,12 @@ public abstract class Usuario {
         return id;
     }
 
+    public int getCantidadDePrestamos() {
+        return cantidadDePrestamos;
+    }
 
+    public int setCantidadDePrestamos() {
+        Usuario.cantidadDePrestamos = cantidadDePrestamos++;
+        return cantidadDePrestamos;
+    }
 }

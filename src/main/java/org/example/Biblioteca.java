@@ -58,7 +58,7 @@ public class Biblioteca {
         }
     }
     public Materiales busquedaMaterial(){
-        System.out.println("Ingrese el titulo que desea retirar");
+        System.out.println("Ingrese el titulo que desea retirar/devoler");
         Scanner sc = new Scanner(System.in);
         String titulo = sc.nextLine();
         for(Materiales material: misMateriales) {
@@ -72,6 +72,7 @@ public class Biblioteca {
         return null;
     }
     public Usuario buscarUsuario() {
+        System.out.println("Ingrese ID del Usuario:");
         Scanner sc = new Scanner(System.in);
         int id = Integer.parseInt(sc.nextLine());
 
@@ -79,39 +80,81 @@ public class Biblioteca {
             if(usuario.getId() == id) {
                 return usuario;
             }
-            else{
-                System.out.println("No se encontro el ID");
-            }
+
         }
+        System.out.println("No se encontro el ID");
         return null;
     }
     public void prestarMateriales() {
 
         Usuario usuario = buscarUsuario();
         Materiales materiales= busquedaMaterial();
-        if (materiales.getEstado() == Materiales.estado.DISPONIBLE) {
-            materiales.setEstado(Materiales.estado.PRESTADO);
-            LocalDate fechaDevolucion = calcularFechaDevolucion(materiales, usuario);
-            Prestamo prestamo = new Prestamo(usuario, materiales, LocalDate.now(), fechaDevolucion);
-            misPrestamos.add(prestamo);
+        if(usuario instanceof Profesor && usuario.getCantidadDePrestamos()<5) {
+            if (materiales.getEstado() == Materiales.estado.PRESTADO) {
+                System.out.println("El material ya ha sido prestado");
+            }
+            if (materiales.getEstado() == Materiales.estado.DISPONIBLE) {
+                materiales.setEstado(Materiales.estado.PRESTADO);
+                LocalDate fechaDevolucion = calcularFechaDevolucion(materiales, usuario);
+                Prestamo prestamo = new Prestamo(usuario, materiales, LocalDate.now(), fechaDevolucion);
+                misPrestamos.add(prestamo);
+            }
+            if (materiales.getEstado() == Materiales.estado.EN_SALA) {
+                System.out.println("Has solicitado un material para consumo en sala");
+            }
+            if (materiales.getEstado() == Materiales.estado.EN_REPARECIO) {
+                System.out.println("Parece que este material se esta reparando");
+            }
+            usuario.setCantidadDePrestamos();//muchas dudas aca
         }
-        if (materiales.getEstado() == Materiales.estado.EN_SALA) {
-            System.out.println("Has solicitado un material para consumo en sala");
+        if(usuario instanceof Estudiante && usuario.getCantidadDePrestamos()<3) {
+            if (materiales.getEstado() == Materiales.estado.PRESTADO) {
+                System.out.println("El material ya ha sido prestado");
+            }
+            if (materiales.getEstado() == Materiales.estado.DISPONIBLE) {
+                materiales.setEstado(Materiales.estado.PRESTADO);
+                LocalDate fechaDevolucion = calcularFechaDevolucion(materiales, usuario);
+                Prestamo prestamo = new Prestamo(usuario, materiales, LocalDate.now(), fechaDevolucion);
+                misPrestamos.add(prestamo);
+            }
+            if (materiales.getEstado() == Materiales.estado.EN_SALA) {
+                System.out.println("Has solicitado un material para consumo en sala");
+            }
+            if (materiales.getEstado() == Materiales.estado.EN_REPARECIO) {
+                System.out.println("Parece que este material se esta reparando");
+            }
+            usuario.setCantidadDePrestamos();
         }
-        if (materiales.getEstado() == Materiales.estado.EN_REPARECIO) {
-            System.out.println("Parece que este material se esta reparando");
-        }
-        if (materiales.getEstado() == Materiales.estado.PRESTADO) {
-            System.out.println("El material ya ha sido prestado");
+        else{
+            System.out.println("Ha sobrepasadp el limite de prestamos");
         }
 
+
     }
-    public void devolucionMaterial(Usuario usuario,Materiales materiales){
-        materiales.setEstado(Materiales.estado.DISPONIBLE);
-        /*
-        misPrestamos.remove(Prestamo);
-        hay que hace una funcion que busque el prestamo y lo devuelva
-    */
+    public void muestraDePrestamos(){
+        for(Prestamo prestamo: misPrestamos) {
+            System.out.println("=====================================");
+            System.out.println("ID Prestamo: "+prestamo.getIdPrestamo());
+            System.out.println("Titulo: "+prestamo.getMaterial().getTitulo());
+            System.out.println("Pedido por: "+prestamo.getUsuario().getNombre());
+            System.out.println("ID Usuario: "+prestamo.getUsuario().getId());
+        }
+        if(misPrestamos.size() == 0) {
+            System.out.println("No hay prestmaos en el sistema");
+        }
+    }
+
+    public void devolucionMaterial(){
+
+        Usuario usuarioActual = buscarUsuario();
+        Materiales materialesActual = busquedaMaterial();
+        for(Prestamo prestamo: misPrestamos) {
+            if(usuarioActual.getId() == prestamo.getUsuario().getId() && materialesActual.getTitulo().equalsIgnoreCase(prestamo.getMaterial().getTitulo())) {
+                materialesActual.setEstado(Materiales.estado.DISPONIBLE);
+                misPrestamos.remove(prestamo);
+            }
+        }
+
     }
     /////////////////////MUESTREO DE USUARIOS Y MODIFICACIONES DE DATOS//////////////////////
     public void mostrarUno(Usuario u){
@@ -181,6 +224,33 @@ public class Biblioteca {
             System.out.println("\tApellido: " + u.getApellido());
         }
 
+    }
+    //////////////////////MUESTREO MATERIALES/////////////////////////
+    public void mostrarMateriales(){
+        for (Materiales material : misMateriales) {
+            if(material instanceof Libro) {
+                System.out.println("==================");
+                System.out.println("TITULO: "+material.getTitulo());
+                System.out.println("AUTOR:"+material.getAutor());
+                System.out.println("ESTADO:"+material.getEstado());
+                System.out.println("Paginas"+((Libro) material).getNroPaginas());
+            }
+            if (material instanceof Revistas) {
+                System.out.println("=================");
+                System.out.println("TITULO: "+material.getTitulo());
+                System.out.println("AUTOR:"+material.getAutor());
+                System.out.println("ESTADO:"+material.getEstado());
+                System.out.println("EDICION:"+((Revistas) material).getNroEdicion());
+            }
+            if (material instanceof DVDS) {
+                System.out.println("===============");
+                System.out.println("TITULO: "+material.getTitulo());
+                System.out.println("AUTOR:"+material.getAutor());
+                System.out.println("ESTADO:"+material.getEstado());
+                System.out.println("DURACION:"+((DVDS) material).getDuracion());
+            }
+
+        }
     }
 
 
